@@ -16,20 +16,36 @@ let users = [
 const User = {
     createNew(user) {
         const newUser = {id: shortid.generate(), ...user}
-        user.push(newUser)
-        return newUser
+
+        if (user.push(newUser)) {
+            return newUser
+        }
+        return null
     },
     getAll() {
-
+        return users
     },
     getById(id) {
-
+        const user = users.find(user => user.id === id)
+        return user
     },
     update(id, changes) {
-
+        const user = user.find(u => u.id === id)
+        if(!user) {
+            return null
+        }
+        else {
+            users = users.map(user => user.id === id ? {id:user.id, ...changes} : user)
+            return users.find(u => u.id === id)
+        }
     },
     delete(id) {
+        const deletedUser = users.find(u => u.id === id)
 
+        if (deletedUser) {
+            users = users.filter(user => user.id !== id)
+        }
+        return deletedUser
     },
 }
 
@@ -44,12 +60,53 @@ server.post('/api/users', (req, res) => {
 
     const newUser = User.createNew(clientUser)
 
-    res.status(201).json(newUser)
+    newUser ? res.status(201).json(newUser) : res.status(500).json({errorMessage:"There was an error while saving the user to the database"})
 })
-server.get('/api/users')
-server.get('/api/users/:id')
-server.delete('/api/users/:id')
-server.put('/api/users/:id')
+server.get('/api/users', (req, res) => {
+    const users = Users.getAll()
+
+    users ? res.status(200).json(users) : res.status(500).json({errorMessage: "The users information could not be retrieved"})
+})
+server.get('/api/users/:id', (req, res) => {
+    const { id } = req.params
+    const user = User.getById(id)
+
+    user ? res.status(200).json(user) : res.status(404).json({errorMessage: 'The user with the specified ID does not exist.'})
+})
+server.delete('/api/users/:id', (req, res) => {
+    const { id } = req.params
+    let deletedUser = null
+    if (users.some(user => user.id === id)) {
+        deletedUser = User.delete(id)
+    }
+    else {
+        res.status(404).json({message: "The user with the specified ID does not exist."})
+        return
+    }
+
+    deletedUser ? res.status(200).json(deletedUser) : res.status(500).json({errorMessage: "The user could not be removed"})
+})
+server.put('/api/users/:id', (req, res) => {
+    const { id } = req.params
+    const changes = req.body
+    let updatedUser = null
+
+    if (!changes.name || !changes.bio) {
+        res.status(400).json({ message: "Please provide name and bio for the user"})
+        return
+    }
+
+    if (users.some(user => user.id === id)) {
+        // if id exists then this happens
+        updatedUser = User.update(id, changes)
+    }
+    else {
+        res.status(404).json({message: "The user with the specified ID does not exist."})
+        return
+    }
+
+    updatedUser ? res.status(200).json(updatedUser) : res.status(500).json({ errorMessage:"The user information could not be modified."})
+})
 
 
 // catch-all endpoint
