@@ -1,0 +1,30 @@
+{
+  "name": "api1-project",
+  "version": "1.0.0",
+  "description": "user project",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "gitignore": "^0.6.0",
+    "shortid": "^2.2.16"
+  },
+  "devDependencies": {
+    "eslint": "^7.14.0",
+    "nodemon": "^2.0.6"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "server": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xiongjoh/node-api1-project.git"
+  },
+  "author": "Johnny Xiong",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/xiongjoh/node-api1-project/issues"
+  },
+  "homepage": "https://github.com/xiongjoh/node-api1-project#readme"
+}
