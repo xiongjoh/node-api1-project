@@ -17,7 +17,7 @@ const User = {
     createNew(user) {
         const newUser = {id: shortid.generate(), ...user}
 
-        if (user.push(newUser)) {
+        if (users.push(newUser)) {
             return newUser
         }
         return null
@@ -30,7 +30,7 @@ const User = {
         return user
     },
     update(id, changes) {
-        const user = user.find(u => u.id === id)
+        const user = users.find(u => u.id === id)
         if(!user) {
             return null
         }
@@ -63,7 +63,7 @@ server.post('/api/users', (req, res) => {
     newUser ? res.status(201).json(newUser) : res.status(500).json({errorMessage:"There was an error while saving the user to the database"})
 })
 server.get('/api/users', (req, res) => {
-    const users = Users.getAll()
+    const users = User.getAll()
 
     users ? res.status(200).json(users) : res.status(500).json({errorMessage: "The users information could not be retrieved"})
 })
